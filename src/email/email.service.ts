@@ -14,8 +14,11 @@ export interface FormEmailData {
 export class EmailService {
   private readonly logger = new Logger(EmailService.name)
   private transporter: Transporter
+  private readonly isLive: boolean
 
   constructor(private configService: ConfigService) {
+    this.isLive = this.configService.get<string>('IS_LIVE', 'false') === 'true'
+
     this.transporter = nodemailer.createTransport({
       host: this.configService.get<string>('SMTP_HOST'),
       port: this.configService.get<number>('SMTP_PORT'),
@@ -29,6 +32,13 @@ export class EmailService {
 
   async sendFormSubmission(data: FormEmailData): Promise<void> {
     const { name, email, subject, message } = data
+
+    if (!this.isLive) {
+      this.logger.warn(
+        `[DRY RUN] Would have sent email - From: ${email}, Subject: "${subject}", Name: ${name}, Message length: ${message.length} chars`
+      )
+      return
+    }
 
     const emailBody = `New form submission received:
 
