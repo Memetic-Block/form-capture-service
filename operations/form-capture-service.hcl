@@ -2,6 +2,16 @@ job "form-capture-service" {
   datacenters = ["mb-hel"]
   type        = "service"
 
+  update {
+    max_parallel      = 1
+    canary            = 1
+    min_healthy_time  = "30s"
+    healthy_deadline  = "5m"
+    progress_deadline = "10m"
+    auto_revert       = true
+    auto_promote      = true
+  }
+
   group "form-capture-service-group" {
     count = 1
 
