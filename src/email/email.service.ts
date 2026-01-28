@@ -16,17 +16,13 @@ export class EmailService {
   private transporter: Transporter
 
   constructor(private configService: ConfigService) {
-    const privateKey = this.configService.get<string>('GMAIL_PRIVATE_KEY')?.replace(/\\n/g, '\n')
-
     this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
+      host: this.configService.get<string>('SMTP_HOST'),
+      port: this.configService.get<number>('SMTP_PORT'),
       secure: true,
       auth: {
-        type: 'OAuth2',
-        user: this.configService.get<string>('GMAIL_USER'),
-        serviceClient: this.configService.get<string>('GMAIL_SERVICE_CLIENT'),
-        privateKey
+        user: this.configService.get<string>('SMTP_USER'),
+        pass: this.configService.get<string>('SMTP_PASS')
       }
     })
   }

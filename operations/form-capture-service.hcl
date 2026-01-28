@@ -20,21 +20,22 @@ job "form-capture-service" {
       }
 
       env {
-        VERSION = "[[ .commit_sha ]]"
-        PORT    = "${NOMAD_PORT_http}"
+        VERSION   = "[[ .commit_sha ]]"
+        PORT      = "${NOMAD_PORT_http}"
+        SMTP_HOST = "smtp.gmail.com"
+        SMTP_PORT = 465
       }
 
-      vault { policies = ["form-capture-service-gmail"] }
+      vault { policies = ["memeticblock-form-capture-service"] }
 
       template {
         data        = <<-EOF
-        {{ with secret "kv/wuzzy/form-capture-service/gmail" }}
-        GMAIL_USER="{{ .Data.data.GMAIL_USER }}"
-        GMAIL_SERVICE_CLIENT="{{ .Data.data.GMAIL_SERVICE_CLIENT }}"
-        GMAIL_PRIVATE_KEY="{{ .Data.data.GMAIL_PRIVATE_KEY }}"
+        {{- with secret "kv/memeticblock/form-capture-service" }}
+        SMTP_USER="{{ .Data.data.SMTP_USER }}"
+        SMTP_PASS="{{ .Data.data.SMTP_PASS }}"
         MAIL_FROM="{{ .Data.data.MAIL_FROM }}"
         MAIL_TO="{{ .Data.data.MAIL_TO }}"
-        {{ end }}
+        {{- end }}
         EOF
         destination = "secrets/config.env"
         env         = true
@@ -55,7 +56,16 @@ job "form-capture-service" {
       service {
         name = "form-capture-service"
         port = "http"
-
+        tags = [
+          "logging",          
+          "traefik.enable=true",
+          "traefik.http.routers.api-live.rule=Host(`forms.memeticblock.com`)",
+          "traefik.http.routers.api-live.entrypoints=https",
+          "traefik.http.routers.api-live.tls=true",
+          "traefik.http.routers.api-live.tls.certresolver=memetic-block",
+          "traefik.http.routers.api-live.middlewares=form-capture-service-ratelimit",
+          "traefik.http.middlewares.form-capture-service-ratelimit.ratelimit.average=10"
+        ]
         check {
           name     = "form-capture-service-http-check"
           type     = "http"
