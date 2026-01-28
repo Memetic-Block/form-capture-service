@@ -24,15 +24,14 @@ job "form-capture-service" {
         PORT    = "${NOMAD_PORT_http}"
       }
 
-      vault { policies = ["form-capture-service-smtp"] }
+      vault { policies = ["form-capture-service-gmail"] }
 
       template {
         data        = <<-EOF
-        {{ with secret "kv/wuzzy/form-capture-service/smtp" }}
-        SMTP_HOST="{{ .Data.data.SMTP_HOST }}"
-        SMTP_PORT="{{ .Data.data.SMTP_PORT }}"
-        SMTP_USER="{{ .Data.data.SMTP_USER }}"
-        SMTP_PASS="{{ .Data.data.SMTP_PASS }}"
+        {{ with secret "kv/wuzzy/form-capture-service/gmail" }}
+        GMAIL_USER="{{ .Data.data.GMAIL_USER }}"
+        GMAIL_SERVICE_CLIENT="{{ .Data.data.GMAIL_SERVICE_CLIENT }}"
+        GMAIL_PRIVATE_KEY="{{ .Data.data.GMAIL_PRIVATE_KEY }}"
         MAIL_FROM="{{ .Data.data.MAIL_FROM }}"
         MAIL_TO="{{ .Data.data.MAIL_TO }}"
         {{ end }}
