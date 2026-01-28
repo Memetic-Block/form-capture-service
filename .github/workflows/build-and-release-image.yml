@@ -54,7 +54,7 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_ID:${GITHUB_SHA}
           docker push $IMAGE_ID:${GITHUB_SHA}
 
-      # - name: Deploy new version
-      #   run: |
-      #     sed -i "s/\[\[ .commit_sha \]\]/${GITHUB_SHA}/g" operations/form-capture-service.hcl
-      #     nomad job run operations/form-capture-service.hcl
+      - name: Deploy new version
+        run: |
+          sed -i "s/\[\[ .commit_sha \]\]/${GITHUB_SHA}/g" operations/form-capture-service.hcl
+          nomad job run operations/form-capture-service.hcl
