@@ -24,6 +24,22 @@ cp .env.example .env
 | `SMTP_PASS` | Google App Password | - |
 | `MAIL_FROM` | Sender email address | `formcapture@memeticblock.com` |
 | `MAIL_TO` | Recipient email address | `build@memeticblock.com` |
+| `IS_LIVE` | Enable email sending (`true`/`false`) | `false` |
+| `TURNSTILE_ENABLED` | Enable Cloudflare Turnstile captcha (`true`/`false`) | `true` |
+| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret key | - |
+
+### Cloudflare Turnstile Setup
+
+This service uses [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) to protect form submissions from bots.
+
+1. Go to the [Cloudflare dashboard](https://dash.cloudflare.com/) → Turnstile
+2. Click "Add site" and configure your widget
+3. Copy the **Secret Key** to `TURNSTILE_SECRET_KEY`
+4. Use the **Site Key** in your frontend integration
+
+For local development, set `TURNSTILE_ENABLED=false` to bypass verification.
+
+See the [Turnstile documentation](https://developers.cloudflare.com/turnstile/get-started/) for detailed setup instructions.
 
 ### Google App Password Setup
 
@@ -59,7 +75,8 @@ Submit a form.
   "name": "John Doe",
   "email": "john@example.com",
   "subject": "Partnership inquiry",
-  "message": "Hello, I'd like to discuss a potential partnership..."
+  "message": "Hello, I'd like to discuss a potential partnership...",
+  "turnstileToken": "0.ABC123..."
 }
 ```
 
@@ -71,6 +88,7 @@ Submit a form.
 | `email` | string | Required, valid email format |
 | `subject` | string | Required, 1-200 characters |
 | `message` | string | Required, 1-5000 characters |
+| `turnstileToken` | string | Required, Cloudflare Turnstile response token |
 
 **Success Response:** `200 OK`
 
@@ -88,6 +106,16 @@ Submit a form.
   "statusCode": 400,
   "message": ["email must be an email", "name should not be empty"],
   "error": "Bad Request"
+}
+```
+
+**Captcha Error Response:** `403 Forbidden`
+
+```json
+{
+  "statusCode": 403,
+  "message": "Captcha verification failed",
+  "error": "Forbidden"
 }
 ```
 
