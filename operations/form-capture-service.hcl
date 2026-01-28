@@ -2,6 +2,11 @@ job "form-capture-service" {
   datacenters = ["mb-hel"]
   type        = "service"
 
+  constraint {
+    attribute = "${meta.region}"
+    value     = "useast"
+  }
+
   update {
     max_parallel      = 1
     canary            = 1
