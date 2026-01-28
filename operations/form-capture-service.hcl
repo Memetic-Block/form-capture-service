@@ -59,7 +59,7 @@ job "form-capture-service" {
         tags = [
           "logging",          
           "traefik.enable=true",
-          "traefik.http.routers.api-live.rule=Host(`forms.memeticblock.com`)",
+          "traefik.http.routers.api-live.rule=Host(`forms.hel.memeticblock.net`)",
           "traefik.http.routers.api-live.entrypoints=https",
           "traefik.http.routers.api-live.tls=true",
           "traefik.http.routers.api-live.tls.certresolver=memetic-block",
