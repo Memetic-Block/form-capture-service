@@ -35,10 +35,11 @@ job "form-capture-service" {
       }
 
       env {
-        VERSION   = "[[ .commit_sha ]]"
-        PORT      = "${NOMAD_PORT_http}"
-        SMTP_HOST = "smtp.gmail.com"
-        SMTP_PORT = 587
+        VERSION           = "[[ .commit_sha ]]"
+        PORT              = "${NOMAD_PORT_http}"
+        SMTP_HOST         = "smtp.gmail.com"
+        SMTP_PORT         = 587
+        TURNSTILE_ENABLED = "true"
       }
 
       vault { policies = ["memeticblock-form-capture-service"] }
@@ -50,6 +51,7 @@ job "form-capture-service" {
         SMTP_PASS="{{ .Data.data.SMTP_PASS }}"
         MAIL_FROM="{{ .Data.data.MAIL_FROM }}"
         MAIL_TO="{{ .Data.data.MAIL_TO }}"
+        TURNSTILE_SECRET_KEY="{{ .Data.data.TURNSTILE_SECRET_KEY }}"
         {{- end }}
         EOF
         destination = "secrets/config.env"

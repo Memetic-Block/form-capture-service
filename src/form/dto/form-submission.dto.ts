@@ -22,4 +22,8 @@ export class FormSubmissionDto {
   @MinLength(1)
   @MaxLength(5000)
   message: string
+
+  @IsNotEmpty()
+  @IsString()
+  turnstileToken: string
 }
