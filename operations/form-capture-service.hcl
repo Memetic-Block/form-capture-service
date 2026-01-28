@@ -78,7 +78,10 @@ job "form-capture-service" {
           "traefik.http.routers.api-live.entrypoints=https",
           "traefik.http.routers.api-live.tls=true",
           "traefik.http.routers.api-live.tls.certresolver=memetic-block",
-          "traefik.http.routers.api-live.middlewares=form-capture-service-ratelimit",
+          "traefik.http.routers.api-live.middlewares=form-capture-service-cors,form-capture-service-ratelimit",
+          "traefik.http.middlewares.form-capture-service-cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS",
+          "traefik.http.middlewares.form-capture-service-cors.headers.accesscontrolallowheaders=Content-Type,Authorization,Accept",
+          "traefik.http.middlewares.form-capture-service-cors.headers.accesscontrolalloworiginlist=*",
           "traefik.http.middlewares.form-capture-service-ratelimit.ratelimit.average=10"
         ]
         check {
