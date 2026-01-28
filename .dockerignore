@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+*.md
+.dockerignore
+Dockerfile
+.eslintrc.js
+.prettierrc
+coverage
+test
+operations
