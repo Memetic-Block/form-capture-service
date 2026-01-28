@@ -1,0 +1,60 @@
+name: Build & Publish Form Capture Service Image
+
+on:
+  push:
+    branches: master
+    tags:
+      - v*
+
+env:
+  IMAGE_NAME: form-capture-service
+
+jobs:
+  push:
+    runs-on: self-hosted
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build image
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          docker build . \
+            --file Dockerfile \
+            --tag $IMAGE_NAME \
+            --label "runnumber=${GITHUB_RUN_ID}"
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=stage
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          echo -e "{\"deploy\":\"$VERSION\",\"commit_sha\":\"${GITHUB_SHA}\"}" > deploy-vars.json
+
+          docker tag $IMAGE_NAME $IMAGE_ID:${GITHUB_SHA}
+          docker push $IMAGE_ID:${GITHUB_SHA}
+
+      # - name: Deploy new version
+      #   run: |
+      #     sed -i "s/\[\[ .commit_sha \]\]/${GITHUB_SHA}/g" operations/form-capture-service.hcl
+      #     nomad job run operations/form-capture-service.hcl
