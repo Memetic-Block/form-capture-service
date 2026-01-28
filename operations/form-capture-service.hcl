@@ -38,7 +38,7 @@ job "form-capture-service" {
         VERSION   = "[[ .commit_sha ]]"
         PORT      = "${NOMAD_PORT_http}"
         SMTP_HOST = "smtp.gmail.com"
-        SMTP_PORT = 465
+        SMTP_PORT = 587
       }
 
       vault { policies = ["memeticblock-form-capture-service"] }
