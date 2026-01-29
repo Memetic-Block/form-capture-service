@@ -15,7 +15,7 @@ export class TurnstileService {
   private readonly enabled: boolean
 
   constructor(private readonly configService: ConfigService) {
-    this.secretKey = this.configService.get<string>('TURNSTILE_SECRET_KEY', '')
+    this.secretKey = this.configService.get<string>('TURNSTILE_SECRETKEY', '')
     this.enabled = this.configService.get<string>('TURNSTILE_ENABLED', 'true') === 'true'
   }
 
@@ -30,7 +30,7 @@ export class TurnstileService {
     }
 
     if (!this.secretKey) {
-      this.logger.error('TURNSTILE_SECRET_KEY is not configured')
+      this.logger.error('TURNSTILE_SECRETKEY is not configured')
       return false
     }
 

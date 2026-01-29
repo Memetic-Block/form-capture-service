@@ -26,7 +26,7 @@ cp .env.example .env
 | `MAIL_TO` | Recipient email address | `build@memeticblock.com` |
 | `IS_LIVE` | Enable email sending (`true`/`false`) | `false` |
 | `TURNSTILE_ENABLED` | Enable Cloudflare Turnstile captcha (`true`/`false`) | `true` |
-| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret key | - |
+| `TURNSTILE_SECRETKEY` | Cloudflare Turnstile secret key | - |
 
 ### Cloudflare Turnstile Setup
 
@@ -34,7 +34,7 @@ This service uses [Cloudflare Turnstile](https://developers.cloudflare.com/turns
 
 1. Go to the [Cloudflare dashboard](https://dash.cloudflare.com/) → Turnstile
 2. Click "Add site" and configure your widget
-3. Copy the **Secret Key** to `TURNSTILE_SECRET_KEY`
+3. Copy the **Secret Key** to `TURNSTILE_SECRETKEY`
 4. Use the **Site Key** in your frontend integration
 
 For local development, set `TURNSTILE_ENABLED=false` to bypass verification.
