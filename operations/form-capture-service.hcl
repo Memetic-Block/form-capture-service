@@ -40,6 +40,7 @@ job "form-capture-service" {
         SMTP_HOST         = "smtp.gmail.com"
         SMTP_PORT         = 587
         TURNSTILE_ENABLED = "true"
+        IS_LIVE           = "true"
       }
 
       vault { policies = ["memeticblock-form-capture-service"] }
